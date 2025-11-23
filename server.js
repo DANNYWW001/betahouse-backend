@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const path = require("path");
 const connectDB = require("./src/config/db");
 const authRoutes = require("./src/routes/authRoutes");
 const propertyRoutes = require("./src/routes/propertyRoutes");
@@ -11,31 +12,32 @@ connectDB && connectDB();
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  process.env.FRONTEND_URL, 
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: allowedOrigins,
     credentials: false, 
   })
 );
 
-console.log(
-  "CORS allowed origins: http://localhost:5173, http://localhost:5174"
-);
+console.log("CORS allowed origins:", allowedOrigins);
 
 app.use(express.json());
 
-app.use("/public", express.static("public"));
-
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
   res.json({ message: "BetaHouse API is running" });
 });
 
-// ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 
-// ERROR HANDLERS
 app.use(notFound);
 app.use(errorHandler);
 
