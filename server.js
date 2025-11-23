@@ -12,23 +12,15 @@ connectDB && connectDB();
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  process.env.CLIENT_URL, 
-].filter(Boolean);
-
+// UNIVERSAL CORS
 app.use(
   cors({
-    origin: allowedOrigins,
-    credentials: false, 
+    origin: "*",
+    credentials: false,
   })
 );
 
-console.log("CORS allowed origins:", allowedOrigins);
-
 app.use(express.json());
-
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
