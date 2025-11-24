@@ -23,7 +23,7 @@ router.get(
 
       const filter = {};
 
-      // LOCATION
+      // LOCATION: search in location/city/state (case-insensitive)
       if (location) {
         const loc = location.trim();
         filter.$or = [
@@ -33,17 +33,17 @@ router.get(
         ];
       }
 
-      // TYPE
+      // TYPE: e.g. "apartment", "duplex"
       if (type) {
         filter.type = { $regex: type.trim(), $options: "i" };
       }
 
-      // EXACT BEDROOM MATCH
+      // BEDROOMS: support either ?bedrooms=3 or ?beds=3
       const bedValue = bedrooms ?? beds;
       if (bedValue !== undefined && bedValue !== "") {
         const bedNum = Number(bedValue);
         if (!Number.isNaN(bedNum)) {
-          filter.bedrooms = bedNum; 
+          filter.bedrooms = bedNum;
         }
       }
 
@@ -52,9 +52,7 @@ router.get(
 
       if (sort === "price-asc") {
         sortOption = { priceValue: 1 };
-      }
-
-      if (sort === "price-desc") {
+      } else if (sort === "price-desc") {
         sortOption = { priceValue: -1 };
       }
 
@@ -82,5 +80,6 @@ router.get(
     }
   }
 );
+
 
 module.exports = router;
